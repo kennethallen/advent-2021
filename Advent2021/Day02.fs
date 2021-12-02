@@ -3,14 +3,13 @@
 open System.Text.RegularExpressions
 
 type Dir = Forward | Down | Up
-let parseDir s = match s with
-                 | "forward" -> Forward
-                 | "down"    -> Down
-                 | "up"      -> Up
+let parseDir = function
+| "forward" -> Forward
+| "down"    -> Down
+| "up"      -> Up
 
 let regex = Regex "^(forward|down|up) (\d+)$"
 let parseCommand s =
-  let m = (regex.Match s).Groups |> List.ofSeq
   let [_; di; n] = (regex.Match s).Groups |> List.ofSeq
   (parseDir di.Value, int n.Value)
 
