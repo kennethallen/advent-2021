@@ -4,8 +4,8 @@ open Xunit
 open System.IO
 open Day01
 
-let in0 = [199; 200; 208; 210; 200; 207; 240; 269; 260; 263]
-let in1 = seq { yield! File.ReadLines "Input/01.txt" |> Seq.map int }
+let in0 = ["199"; "200"; "208"; "210"; "200"; "207"; "240"; "269"; "260"; "263"]
+let in1 = File.ReadAllLines "Input/01.txt"
 
 [<Fact>]
 let part1_in0 () = Assert.Equal(7, part1 in0)
