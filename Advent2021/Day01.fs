@@ -3,7 +3,7 @@
 let part1Impl = Seq.pairwise
              >> Seq.filter (fun (d0, d1) -> d1 > d0)
              >> Seq.length
-let part1: (seq<string> -> int) = Seq.map int<string>
+let part1: (seq<string> -> int) = Seq.map int
                                >> part1Impl
 
 let part2: (seq<string> -> int) = Seq.map int
