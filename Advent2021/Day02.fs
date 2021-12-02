@@ -1,22 +1,37 @@
 ﻿module Day02
 
-open System
 open System.Text.RegularExpressions
 
-type Dir = forward | down | up
+type Dir = Forward | Down | Up
+let parseDir s = match s with
+                 | "forward" -> Forward
+                 | "down"    -> Down
+                 | "up"      -> Up
 
 let regex = Regex "^(forward|down|up) (\d+)$"
-let parse s =
-  let [d; n] = regex.Match s
-  (Enum.Parse<Dir> d, int n)
+let parseCommand s =
+  let m = (regex.Match s).Groups |> List.ofSeq
+  let [_; di; n] = (regex.Match s).Groups |> List.ofSeq
+  (parseDir di.Value, int n.Value)
 
 let part1 cs =
-  let (x, y) = cs
-    |> Seq.map parse
-    |> Seq.fold (fun (x, y) (d, n) ->
-      match d with
-        | Dir.forward -> (x+n, y)
-        | Dir.down    -> (x, y-n)
-        | Dir.up      -> (x, y+n)
-    ) (0, 0)
-  x * -y
+  let f (x, de) (di, n) =
+    match di with
+    | Forward -> (x+n, de)
+    | Down    -> (x, de+n)
+    | Up      -> (x, de-n)
+  let (x, de) = cs
+             |> Seq.map parseCommand
+             |> Seq.fold f (0, 0)
+  x * de
+
+let part2 cs =
+ let f (x, de, a) (di, n) =
+   match di with
+   | Forward -> (x+n, de + a*n, a)
+   | Down    -> (x, de, a+n)
+   | Up      -> (x, de, a-n)
+ let (x, de, _) = cs
+               |> Seq.map parseCommand
+               |> Seq.fold f (0, 0, 0)
+ x * de
