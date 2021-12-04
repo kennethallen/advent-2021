@@ -6,7 +6,7 @@ let parseBin s = Convert.ToInt32(s, 2)
 
 let bitCounts (ls: seq<string>) =
   let f = Seq.map2 (fun count char -> count + ([|char|] |> String |> parseBin))
-  let init = Seq.head ls |> Seq.map (fun _ -> 0)
+  let init = Seq.replicate (ls |> Seq.head |> Seq.length) 0
   Seq.fold f init ls
 
 let majBits ls =
