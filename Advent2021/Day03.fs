@@ -30,4 +30,4 @@ let part2 ls =
       let targetBit = majBits rems |> Seq.item i |> (=) maj
       let pred (l: string) = (l.[i] = '1') = targetBit
       f (rems |> Seq.filter pred) (i+1) maj
-  (f ls 0 true) * (f ls 1 false)
+  (f ls 0 true) * (f ls 0 false)
