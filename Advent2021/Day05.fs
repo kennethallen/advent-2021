@@ -5,8 +5,12 @@ open System.Text.RegularExpressions
 
 let regex = Regex "^(\d+),(\d+) -> (\d+),(\d+)$"
 let parseLine s =
-  let [_; x0; y0; x1; y1] = (regex.Match s).Groups |> List.ofSeq
-  ((int x0.Value, int y0.Value), (int x1.Value, int y1.Value))
+  let [|x0; y0; x1; y1|] =
+    (regex.Match s).Groups
+    |> Seq.tail
+    |> Seq.map (fun g -> int g.Value)
+    |> Array.ofSeq
+  ((x0, y0), (x1, y1))
 
 let enumSeg diags ((x0: int, y0: int), (x1, y1)) =
   let xMin = Math.Min(x0, x1)
