@@ -1,22 +1,5 @@
 ﻿module Day08
 
-let count1478 (l: string) =
-  let [|s0; s1|] = l.Split(" | ")
-  let refs = s0.Split(" ")
-  let outs = s1.Split(" ")
-  let sizes1478 = Set.ofList [2; 3; 4; 7]
-  outs
-  |> Seq.filter (fun s -> Set.contains s.Length sizes1478)
-  |> Seq.length
-
-(*
- A
-B C
- D
-E F
- G
-*)
-
 let solve (l: string) =
   let [|s0; s1|] = l.Split(" | ")
   let refs = s0.Split(" ")
@@ -55,9 +38,3 @@ let part2: (seq<string> -> int) =
   Seq.map solve
   >> Seq.map digitsToNum
   >> Seq.sum
-let part2a ls =
-  let dss = ls |> Seq.map solve
-  printfn "%A" dss
-  let ns = dss |> Seq.map digitsToNum
-  printfn "%A" ns
-  ns |> Seq.sum
