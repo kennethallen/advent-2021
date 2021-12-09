@@ -30,11 +30,11 @@ let digitsToNum =
     | d :: ds -> d + 10*(f ds)
   List.rev >> f
 
-let part1: (seq<string> -> int) =
+let part1: (string seq -> int) =
   Seq.collect solve
   >> Seq.filter (fun d -> Array.contains d [|1; 4; 7; 8|])
   >> Seq.length
-let part2: (seq<string> -> int) =
+let part2: (string seq -> int) =
   Seq.map solve
   >> Seq.map digitsToNum
   >> Seq.sum

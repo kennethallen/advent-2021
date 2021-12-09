@@ -82,5 +82,5 @@ let run diags =
   >> Seq.distinct
   >> Seq.length
 
-let part1: (seq<string> -> int) = run false
-let part2: (seq<string> -> int) = run true
+let part1: (string seq -> int) = run false
+let part2: (string seq -> int) = run true

@@ -2,7 +2,7 @@
 
 open System
 
-let parse (ls: seq<string>) =
+let parse (ls: string seq) =
   let ns = (Seq.head ls).Split "," |> Seq.map int
   let bs =
     ls
@@ -22,11 +22,9 @@ let play b ns =
       r |> Array.map (fun e -> Seq.contains e ns))
   let rowWin = marked |> Array.exists (Array.forall id)
   let colWin =
-    seq { 0 .. (Array.length b) - 1 }
+    { 0 .. (Array.length b) - 1 }
     |> Seq.exists (fun i ->
       marked |> Array.forall (fun r -> r[i]))
-  //let diagWin back = seq { 0 .. dim } |> Seq.forall (fun i ->
-  //  marked[i][if back then dim-1-i else i])
   if rowWin || colWin then
     Some(
       (b, marked)
@@ -40,7 +38,7 @@ let play b ns =
  
 let part1 ls =
   let (ns, bs) = parse ls
-  seq { 0 .. Seq.length ls }
+  { 0 .. Seq.length ls }
   |> Seq.pick (fun i ->
     let ns' = ns |> Seq.take i
     let wins = bs |> Seq.choose (fun b -> play b ns')
