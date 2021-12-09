@@ -5,7 +5,7 @@ open System.IO
 open Day07
 
 let in0 = ["16,1,2,0,4,2,7,1,2,14"]
-let in1 = File.ReadAllLines "Input/07.txt"
+let in1 = File.ReadLines "Input/07.txt" |> Seq.cache
 
 [<Fact>]
 let part1_in0 () = Assert.Equal(37, part1 in0)

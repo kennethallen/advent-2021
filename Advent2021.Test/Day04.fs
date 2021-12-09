@@ -24,7 +24,7 @@ let in0 = [
   "18  8 23 26 20";
   "22 11 13  6  5";
   " 2  0 12  3  7"]
-let in1 = File.ReadAllLines "Input/04.txt"
+let in1 = File.ReadLines "Input/04.txt" |> Seq.cache
 
 [<Fact>]
 let part1_in0 () = Assert.Equal(4512, part1 in0)

@@ -15,7 +15,7 @@ let in0 = [
   "3,4 -> 1,4"
   "0,0 -> 8,8"
   "5,5 -> 8,2"]
-let in1 = File.ReadAllLines "Input/05.txt"
+let in1 = File.ReadLines "Input/05.txt" |> Seq.cache
 
 [<Fact>]
 let part1_in0 () = Assert.Equal(5, part1 in0)
