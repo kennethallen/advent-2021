@@ -4,7 +4,7 @@ open System
 
 let parseBin s = Convert.ToInt32(s, 2)
 
-let bitCounts (ls: string seq) =
+let bitCounts (ls : string seq) =
   let f = Seq.map2 (fun count char -> count + ([|char|] |> String |> parseBin))
   let init = Seq.replicate (ls |> Seq.head |> Seq.length) 0
   Seq.fold f init ls
@@ -23,11 +23,11 @@ let part1 ls =
   (majs |> f) * (majs |> Seq.map not |> f)
 
 let part2 ls =
-  let rec f (rems: string seq) i maj =
+  let rec f (rems : string seq) i maj =
     match rems |> List.ofSeq with
     | [only] -> parseBin only
     | _      ->
       let targetBit = majBits rems |> Seq.item i |> (=) maj
-      let pred (l: string) = (l.[i] = '1') = targetBit
+      let pred (l : string) = (l.[i] = '1') = targetBit
       f (rems |> Seq.filter pred) (i+1) maj
   (f ls 0 true) * (f ls 0 false)

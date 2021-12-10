@@ -2,7 +2,7 @@
 
 open System
 
-let parse (ls: string seq) =
+let parse (ls : string seq) =
   let ns = (Seq.head ls).Split "," |> Seq.map int
   let bs =
     ls

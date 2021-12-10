@@ -3,8 +3,8 @@
 open System
 open System.Text.RegularExpressions
 
-let mi (a: int) (b: int) = Math.Min(a, b)
-let ma (a: int) (b: int) = Math.Max(a, b)
+let mi (a : int) (b : int) = Math.Min(a, b)
+let ma (a : int) (b : int) = Math.Max(a, b)
 
 type LineType = Horiz | Vert | ForwardDiag | BackDiag
 
@@ -82,5 +82,5 @@ let run diags =
   >> Seq.distinct
   >> Seq.length
 
-let part1: (string seq -> int) = run false
-let part2: (string seq -> int) = run true
+let part1 : string seq -> int = run false
+let part2 : string seq -> int = run true

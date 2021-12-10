@@ -2,7 +2,7 @@
 
 open System
 
-let parse: (string seq -> int array array) =
+let parse : string seq -> int array array =
   Seq.map (
     Seq.map (Array.singleton >> String >> int)
     >> Array.ofSeq)

@@ -1,6 +1,6 @@
 ﻿module Day08
 
-let solve (l: string) =
+let solve (l : string) =
   let [|s0; s1|] = l.Split(" | ")
   let refs = s0.Split(" ")
   let refSized n = refs |> Seq.filter (fun r -> r.Length = n) |> Seq.exactlyOne
@@ -26,15 +26,15 @@ let solve (l: string) =
 let digitsToNum =
   let rec f =
     function
-    | []      -> 0
-    | d :: ds -> d + 10*(f ds)
+    | []    -> 0
+    | d::ds -> d + 10*(f ds)
   List.rev >> f
 
-let part1: (string seq -> int) =
+let part1 : string seq -> int =
   Seq.collect solve
   >> Seq.filter (fun d -> Array.contains d [|1; 4; 7; 8|])
   >> Seq.length
-let part2: (string seq -> int) =
+let part2 : string seq -> int =
   Seq.map solve
   >> Seq.map digitsToNum
   >> Seq.sum
