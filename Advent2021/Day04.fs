@@ -1,4 +1,5 @@
 ﻿module Day04
+#nowarn "25"
 
 open System
 

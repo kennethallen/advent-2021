@@ -1,4 +1,5 @@
 ﻿module Day10
+#nowarn "25"
 
 let rec check stack i line =
   let tryPop c =

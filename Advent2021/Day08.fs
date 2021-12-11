@@ -1,4 +1,5 @@
 ﻿module Day08
+#nowarn "25"
 
 let solve (l : string) =
   let [|s0; s1|] = l.Split(" | ")
