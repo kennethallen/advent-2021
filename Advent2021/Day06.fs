@@ -18,8 +18,9 @@ let sim days (ls : string seq) =
       | 0 -> [6, n; 8, n]
       | f -> [f-1, n])
     |> countMapOfSeq
-  Seq.replicate days step
-  |> Seq.fold (|>) init
+  init
+  |> Seq.unfold (step >> (fun m -> Some (m, m)))
+  |> Seq.item (days-1)
   |> Map.values
   |> Seq.sum
 
