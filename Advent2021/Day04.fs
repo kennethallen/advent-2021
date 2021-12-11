@@ -3,7 +3,7 @@
 open System
 
 let parse (ls : string seq) =
-  let ns = (Seq.head ls).Split "," |> Seq.map int
+  let ns = (Seq.head ls).Split "," |> Seq.map int |> List.ofSeq
   let bs =
     ls
     |> Seq.tail
@@ -14,51 +14,53 @@ let parse (ls : string seq) =
         row.Split(" ", StringSplitOptions.RemoveEmptyEntries)
         |> Array.map int)
       |> Array.ofSeq)
-  (ns, bs)
+    |> List.ofSeq
+  ns, bs
 
-let play b ns =
-  let marked =
-    b |> Array.map (fun r ->
-      r |> Array.map (fun e -> Seq.contains e ns))
-  let rowWin = marked |> Array.exists (Array.forall id)
-  let colWin =
-    { 0 .. (Array.length b) - 1 }
-    |> Seq.exists (fun i ->
-      marked |> Array.forall (fun r -> r[i]))
-  if rowWin || colWin then
-    Some(
-      (b, marked)
-      ||> Seq.map2 (fun br mr ->
-        (br, mr)
-        ||> Seq.map2 (fun be me -> if me then 0 else be)
-        |> Seq.sum)
-      |> Seq.sum)
-  else
-    None
- 
-let part1 ls =
-  let (ns, bs) = parse ls
-  { 0 .. Seq.length ls }
-  |> Seq.pick (fun i ->
-    let ns' = ns |> Seq.take i
-    let wins = bs |> Seq.choose (fun b -> play b ns')
-    if Seq.isEmpty wins then
-      None
+let markAt b (x, y) =
+  b |> Array.updateAt x (b[x] |> Array.updateAt y None)
+
+let rowWin x =
+  Array.item x >> Array.forall Option.isNone
+let colWin y =
+  Array.forall (Array.item y >> Option.isNone)
+
+let score n =
+  Seq.collect (Seq.choose id)
+  >> Seq.sum
+  >> (*) n
+
+let playToEnd nsAll init =
+  let rec f b i ns =
+    let n::ns' = ns
+    let matches =
+      b |> Seq.indexed |> Seq.collect (fun (x, r) ->
+        r |> Seq.indexed |> Seq.choose (fun (y, v) ->
+          if v = Some n then Some (x, y) else None))
+    if Seq.isEmpty matches then
+      f b (i+1) ns'
     else
-      Some ((Seq.last ns') * (Seq.max wins)))
+      let b' = Seq.fold markAt b matches
+      matches
+      |> Seq.tryPick (fun (x, y) ->
+        if rowWin x b' || colWin y b' then
+          Some (i, score n b')
+        else
+          None)
+      |> Option.defaultWith (fun () ->
+        f b' (i+1) ns')
+  f (init |> Array.map (Array.map Some)) 0 nsAll
+ 
+let playedBoards ls =
+  let ns, bs = parse ls
+  bs |> Seq.map (playToEnd ns)
 
-let part2 ls =
-  let (ns, bs) = parse ls
-  let subNs i = ns |> Seq.take i
-  let rec f i bs' =
-    let ns' = subNs i
-    match List.ofSeq bs' with
-    | [only] ->
-      match play only ns' with
-      | Some(n) -> n * Seq.last ns'
-      | None    -> f (i+1) bs'
-    | _      ->
-      bs'
-      |> Seq.filter (fun b -> play b ns' |> Option.isNone)
-      |> f (i+1)
-  f 0 bs
+let part1 : string seq -> int =
+  playedBoards
+  >> Seq.minBy fst
+  >> snd
+
+let part2 : string seq -> int =
+  playedBoards
+  >> Seq.maxBy fst
+  >> snd
