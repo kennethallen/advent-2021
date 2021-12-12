@@ -8,9 +8,8 @@ let parse : string seq -> int array array =
     >> Array.ofSeq)
   >> Array.ofSeq
 
-let tryGet map (x, y) =
-  Array.tryItem x map
-  |> Option.bind (Array.tryItem y)
+let tryGet (x, y) =
+  Array.tryItem x >> Option.bind (Array.tryItem y)
 
 let part1 ls =
   let map = parse ls
@@ -21,7 +20,7 @@ let part1 ls =
     |> Seq.indexed
     |> Seq.filter (fun (y, h) ->
       [x-1,y; x+1,y; x,y-1; x,y+1]
-      |> Seq.choose (tryGet map)
+      |> Seq.choose (fun p -> tryGet p map)
       |> Seq.forall ((<) h))
     |> Seq.map snd)
   |> Seq.map ((+) 1)
@@ -31,7 +30,7 @@ let rec dfs map visited size =
   function
   | []    -> visited, size
   | p::ps ->
-    match Set.contains p visited, tryGet map p with
+    match Set.contains p visited, tryGet p map with
     | true, _                -> dfs map visited size ps
     | false, (None | Some 9) -> dfs map (Set.add p visited) size ps
     | false, Some _          ->
