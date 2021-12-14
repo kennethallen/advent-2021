@@ -25,8 +25,8 @@ let private countAdd (n : uint64) k =
 let private mergeCountMaps m0 m1 =
   Map.fold (fun m k v -> countAdd v k m) m0 m1
 
-let rec private countTail rules memo steps e0 e1 =
-  match steps with
+let rec private countTail rules memo e0 e1 =
+  function
   | 0 -> Map.ofList [e1, 1UL], memo
   | n ->
     let en = Map.find (e0, e1) rules
@@ -34,7 +34,7 @@ let rec private countTail rules memo steps e0 e1 =
       match Map.tryFind (ea, eb, n-1) memo with
       | Some x -> x, memo
       | None   ->
-        let x, memo = countTail rules memo (n-1) ea eb
+        let x, memo = countTail rules memo ea eb (n-1)
         x, Map.add (ea, eb, n-1) x memo
     let m0, memo = memoDescend memo e0 en
     let m1, memo = memoDescend memo en e1
@@ -44,7 +44,7 @@ let private count rules steps es =
   es
   |> Seq.pairwise
   |> Seq.fold (fun (c0, memo) (e0, e1) ->
-    let c1, memo = countTail rules memo steps e0 e1
+    let c1, memo = countTail rules memo e0 e1 steps
     mergeCountMaps c0 c1, memo) (Map.empty, Map.empty)
   |> fst
   |> countAdd 1UL (Seq.head es)
