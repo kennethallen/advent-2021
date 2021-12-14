@@ -33,4 +33,4 @@ let part1_in1 () = Assert.Equal(2937UL, part1 in1)
 [<Fact>]
 let part2_in0 () = Assert.Equal(2188189693529UL, part2 in0)
 [<Fact>]
-let part2_in1 () = Assert.Equal(2937UL, part2 in1)
+let part2_in1 () = Assert.Equal(3390034818249UL, part2 in1)
