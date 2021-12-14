@@ -28,17 +28,15 @@ let private mergeCountMaps m0 m1 =
 let rec private countTail rules memo e0 e1 =
   function
   | 0 -> Map.ofList [e1, 1UL], memo
-  | n ->
-    let en = Map.find (e0, e1) rules
-    let memoDescend memo ea eb =
-      match Map.tryFind (ea, eb, n-1) memo with
-      | Some x -> x, memo
-      | None   ->
-        let x, memo = countTail rules memo ea eb (n-1)
-        x, Map.add (ea, eb, n-1) x memo
-    let m0, memo = memoDescend memo e0 en
-    let m1, memo = memoDescend memo en e1
-    mergeCountMaps m0 m1, memo
+  | steps ->
+    match Map.tryFind (e0, e1, steps) memo with
+    | Some m -> m, memo
+    | None   ->
+      let en = Map.find (e0, e1) rules
+      let m0, memo = countTail rules memo e0 en (steps-1)
+      let m1, memo = countTail rules memo en e1 (steps-1)
+      let m = mergeCountMaps m0 m1
+      m, Map.add (e0, e1, steps) m memo
 
 let private count rules steps es =
   es
