@@ -1,4 +1,6 @@
 ﻿module Day16
+#nowarn "25"
+#nowarn "104"
 
 open System
 
@@ -32,7 +34,7 @@ let split i bs =
 let readChunkedNum =
   let rec f a (c::bs) =
     let ns, bs = split 4 bs
-    let a = (a <<< 4) + (readNum ns)
+    let a = (a <<< 4) + readNum ns
     if c then
       f a bs
     else
@@ -91,7 +93,5 @@ let rec eval = function
        | Op.LessThan    -> testPair (<)
        | Op.Equals      -> testPair (=)
 
-let part2 ls : uint64 =
-  let p, bs = ls |> parseHex |> readPacket
-  let s = sprintf "%A" p
-  eval p
+let part2 : string seq -> uint64 =
+  parseHex >> readPacket >> fst >> eval
