@@ -6,34 +6,34 @@ open Day12
 
 let in0 = ["start-A";"start-b";"A-c";"A-b";"b-d";"A-end";"b-end"]
 let in1 = [
-  "dc-end";
-  "HN-start";
-  "start-kj";
-  "dc-start";
-  "dc-HN";
-  "LN-dc";
-  "HN-end";
-  "kj-sa";
-  "kj-HN";
+  "dc-end"
+  "HN-start"
+  "start-kj"
+  "dc-start"
+  "dc-HN"
+  "LN-dc"
+  "HN-end"
+  "kj-sa"
+  "kj-HN"
   "kj-dc"]
 let in2 = [
-  "fs-end";
-  "he-DX";
-  "fs-he";
-  "start-DX";
-  "pj-DX";
-  "end-zg";
-  "zg-sl";
-  "zg-pj";
-  "pj-he";
-  "RW-he";
-  "fs-DX";
-  "pj-RW";
-  "zg-RW";
-  "start-pj";
-  "he-WI";
-  "zg-he";
-  "pj-fs";
+  "fs-end"
+  "he-DX"
+  "fs-he"
+  "start-DX"
+  "pj-DX"
+  "end-zg"
+  "zg-sl"
+  "zg-pj"
+  "pj-he"
+  "RW-he"
+  "fs-DX"
+  "pj-RW"
+  "zg-RW"
+  "start-pj"
+  "he-WI"
+  "zg-he"
+  "pj-fs"
   "start-RW"]
 let in3 = File.ReadLines "Input/12.txt" |> Seq.cache
 
