@@ -1,6 +1,7 @@
 ﻿module Day15
 
 open System
+open FSharpx.Collections
 
 let private parse : string seq -> int array array =
   Seq.map (
@@ -12,14 +13,10 @@ let private dims = Day11.dims
 
 let private heur (ax: int, ay: int) (bx, by) = Math.Abs(ax - bx) + Math.Abs(ay - by)
 
-let private popMin queue =
-  let e = Set.minElement queue
-  Set.remove e queue, e
-
 let private aStar map start dest =
   let maxX, maxY = dims map
   let rec step queue visited =
-    let queue, (_, d, (px, py)) = popMin queue
+    let (_, d, (px, py)), queue = PriorityQueue.pop queue
     if Set.contains (px, py) visited then
       step queue visited
     elif (px, py) = dest then
@@ -33,9 +30,9 @@ let private aStar map start dest =
         |> Seq.map (fun (x, y) ->
           let nd = d + map[x][y]
           nd + (heur (x, y) dest), nd, (x, y))
-        |> Seq.fold (fun q e -> Set.add e q) queue
+        |> Seq.fold (fun q e -> PriorityQueue.insert e q) queue
       step queue (Set.add (px, py) visited)
-  step (Set.singleton (heur start dest, 0, start)) Set.empty
+  step (Heap.ofSeq false [heur start dest, 0, start]) (Set.empty)
 
 let part1 ls =
   let map = parse ls

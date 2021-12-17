@@ -9,4 +9,8 @@
     <Compile Include="*.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FSharpx.Collections" Version="3.0.1" />
+  </ItemGroup>
+
 </Project>
