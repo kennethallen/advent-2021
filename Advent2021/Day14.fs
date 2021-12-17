@@ -3,7 +3,7 @@
 
 open System.Text.RegularExpressions
 
-let private regex = Regex "^(.)(.) -> (.)$"
+let private regex = Regex @"^(.)(.) -> (.)$"
 let private parse ls =
   let temp = Seq.head ls |> List.ofSeq
   let rules =

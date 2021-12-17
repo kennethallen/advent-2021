@@ -11,7 +11,7 @@ type LineType = Horiz | Vert | ForwardDiag | BackDiag
 
 type LineSeg = (int*int) * (int*int) * LineType
 
-let regex = Regex "^(\d+),(\d+) -> (\d+),(\d+)$"
+let regex = Regex @"^(\d+),(\d+) -> (\d+),(\d+)$"
 let parseLine s =
   let [|x0; y0; x1; y1|] =
     (regex.Match s).Groups

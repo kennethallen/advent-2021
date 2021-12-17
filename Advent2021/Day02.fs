@@ -9,7 +9,7 @@ let parseDir = function
 | "down"    -> Down
 | "up"      -> Up
 
-let regex = Regex "^(forward|down|up) (\d+)$"
+let regex = Regex @"^(forward|down|up) (\d+)$"
 let parseCommand s =
   let [_; di; n] = (regex.Match s).Groups |> List.ofSeq
   (parseDir di.Value, int n.Value)

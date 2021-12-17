@@ -4,7 +4,7 @@
 open System
 open System.Text.RegularExpressions
 
-let regex = Regex "^fold along (x|y)=(\d+)$"
+let regex = Regex @"^fold along (x|y)=(\d+)$"
 let parse ls =
   let split = Seq.findIndex String.IsNullOrEmpty ls
   let ps =
