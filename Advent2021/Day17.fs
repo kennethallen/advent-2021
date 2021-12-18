@@ -1,4 +1,5 @@
 ﻿module Day17
+#nowarn "25"
 
 open System
 open System.Text.RegularExpressions
