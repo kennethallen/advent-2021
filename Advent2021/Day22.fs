@@ -37,9 +37,9 @@ module Octree =
       |> List.ofSeq
 
   let withinPrism p (o: Octree) =
-    p.X0 <= o.X && o.X+o.Dim < p.X1
-    && p.Y0 <= o.Y && o.Y+o.Dim < p.Y1
-    && p.Z0 <= o.Z && o.Z+o.Dim < p.Z1
+    p.X0 <= o.X && o.X+o.Dim-1L <= p.X1
+    && p.Y0 <= o.Y && o.Y+o.Dim-1L <= p.Y1
+    && p.Z0 <= o.Z && o.Z+o.Dim-1L <= p.Z1
 
   let disjointFromPrism p (o: Octree) =
     p.X1 < o.X || o.X+o.Dim <= p.X0
@@ -52,6 +52,7 @@ module Octree =
     elif withinPrism p o then
       {o with Node=State s}
     else
+      assert (o.Dim > 1)
       {o with Node=Children (makeChildren o |> List.map (apply s p))}
 
   let rec clip p o =
@@ -78,6 +79,7 @@ let parse: string seq -> (bool * RPrism) seq =
       |> List.ofSeq
     let [x0; x1; y0; y1; z0; z1] = coords |> List.map int64
     state = "on", {X0=x0; X1=x1; Y0=y0; Y1=y1; Z0=z0; Z1=z1})
+  >> Seq.cache
 
 let step octree (state, prism) = Octree.apply state prism octree
 
