@@ -1,11 +1,7 @@
 ﻿module Day05
 #nowarn "25"
 
-open System
 open System.Text.RegularExpressions
-
-let mi (a : int) (b : int) = Math.Min(a, b)
-let ma (a : int) (b : int) = Math.Max(a, b)
 
 type LineType = Horiz | Vert | ForwardDiag | BackDiag
 
@@ -32,7 +28,7 @@ let hasCollinear ((ax0, ay0), (ax1, ay1), at) x y =
   assert ((ax0 = ax1 && ax0 = x) || (ay1-ay0)*(x-ax0) = (y-ay0)*(ax1-ax0))
   let betweenInc a b c = a <= b && b <= c
   match at with
-  | Vert -> betweenInc (mi ay0 ay1) y (ma ay0 ay1)
+  | Vert -> betweenInc (min ay0 ay1) y (max ay0 ay1)
   | _    -> betweenInc ax0 x ax1
 
 let intersectTypesOrdered a b =
@@ -44,16 +40,16 @@ let intersectTypesOrdered a b =
       Seq.empty
   match at, bt with
   | Horiz, Horiz when ay0 = by0 ->
-    { ma ax0 bx0 .. mi ax1 bx1 } |> Seq.map (fun x -> x, ay0)
+    { max ax0 bx0 .. min ax1 bx1 } |> Seq.map (fun x -> x, ay0)
   | Vert, Vert when ax0 = bx0 ->
-    { ma (mi ay0 ay1) (mi by0 by1) .. mi (ma ay0 ay1) (ma by0 by1) } |> Seq.map (fun y -> ax0, y)
+    { max (min ay0 ay1) (min by0 by1) .. min (max ay0 ay1) (max by0 by1) } |> Seq.map (fun y -> ax0, y)
   | Horiz, Vert -> considerPoint bx0 ay0
   | ForwardDiag, ForwardDiag when ay0-ax0 = by0-bx0 ->
-    { ma ax0 bx0 .. mi ax1 bx1 } |> Seq.map (fun x -> x, x + (ay0-ax0))
+    { max ax0 bx0 .. min ax1 bx1 } |> Seq.map (fun x -> x, x + (ay0-ax0))
   | Horiz, ForwardDiag -> considerPoint (ay0 - (by0-bx0)) ay0
   | Vert, ForwardDiag -> considerPoint ax0 (ax0 + (by0-bx0))
   | BackDiag, BackDiag when ay0+ax0 = by0+bx0 ->
-    { ma ax0 bx0 .. mi ax1 bx1 } |> Seq.map (fun x -> x, (ay0+ax0) - x)
+    { max ax0 bx0 .. min ax1 bx1 } |> Seq.map (fun x -> x, (ay0+ax0) - x)
   | Horiz, BackDiag -> considerPoint ((by0+bx0) - ay0) ay0
   | Vert, BackDiag -> considerPoint ax0 ((by0+bx0) - ax0)
   | ForwardDiag, BackDiag ->

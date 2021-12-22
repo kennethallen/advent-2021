@@ -1,7 +1,6 @@
 ﻿module Day17
 #nowarn "25"
 
-open System
 open System.Text.RegularExpressions
 
 let regex = Regex @"^target area: x=(-?\d+)\.\.(-?\d+), y=(-?\d+)\.\.(-?\d+)$"
@@ -22,14 +21,14 @@ let testHits ((xMin, xMax), (yMin, yMax)) (vx, vy) =
         || (y < yMin && vy <= 0) then
       false
     else
-      let dirX = Math.Max(Math.Min(vx, 1), -1)
+      let dirX = vx |> min 1 |> max -1
       step (vx-dirX) (vy-1) (x+vx) (y+vy)
   step vx vy 0 0
 
 let enumHits ((xMin, xMax), (yMin, yMax)) =
   Seq.allPairs
-    { Math.Min(xMin, 0) .. Math.Max(0, xMax) }
-    { Math.Min(yMin, 0) .. 100 } // TODO: Calc better bounds
+    { min xMin 0 .. max 0 xMax }
+    { min yMin 0 .. 100 } // TODO: Calc better bounds
   |> Seq.filter (testHits ((xMin, xMax), (yMin, yMax)))
 
 let peakY (_, vy) =
