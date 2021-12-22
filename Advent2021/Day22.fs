@@ -37,14 +37,14 @@ module Octree =
       |> List.ofSeq
 
   let withinPrism p (o: Octree) =
-    p.X0 <= o.X && o.X+o.Dim <= p.X1
-    && p.Y0 <= o.Y && o.Y+o.Dim <= p.Y1
-    && p.Z0 <= o.Z && o.Z+o.Dim <= p.Z1
+    p.X0 <= o.X && o.X+o.Dim < p.X1
+    && p.Y0 <= o.Y && o.Y+o.Dim < p.Y1
+    && p.Z0 <= o.Z && o.Z+o.Dim < p.Z1
 
   let disjointFromPrism p (o: Octree) =
-    p.X1 < o.X || o.X+o.Dim < p.X0
-    || p.Y1 < o.Y || o.Y+o.Dim < p.Y0
-    || p.Z1 < o.Z || o.Z+o.Dim < p.Z0
+    p.X1 < o.X || o.X+o.Dim <= p.X0
+    || p.Y1 < o.Y || o.Y+o.Dim <= p.Y0
+    || p.Z1 < o.Z || o.Z+o.Dim <= p.Z0
 
   let rec apply s p o =
     if disjointFromPrism p o then
