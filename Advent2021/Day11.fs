@@ -8,14 +8,8 @@ let parse : string seq -> int array array =
     >> Array.ofSeq)
   >> Array.ofSeq
 
-let dims map =
-  Array.length map,
-  Array.tryHead map
-  |> Option.map Array.length
-  |> Option.defaultValue 0
-
 let allCoords map =
-  let x, y = dims map
+  let x, y = Array.squareDims map
   Seq.allPairs { 0 .. x-1 } { 0 .. y-1 }
 
 let adjacent (x0, y0) (x1, y1) =
@@ -52,7 +46,7 @@ let part1 : string seq -> int =
 
 let part2 ls =
   let init = parse ls
-  let x, y = dims init
+  let x, y = Array.squareDims init
   init
   |> Seq.unfold (step >> Some)
   |> Seq.findIndex ((=) (x * y))
