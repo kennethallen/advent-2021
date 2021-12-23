@@ -73,10 +73,6 @@ let parse: string seq -> int array =
   >> Seq.map snd
   >> Array.ofSeq
 
-let foldIntoCountMap map (k, n) =
-  map |> Map.change k (
-    Option.map ((+) n) >> Option.orElse (Some n))
-
 let stepPlayer pIdx game =
   let rolls, die = Die.rollThrice game.Die
   let states =
@@ -91,7 +87,7 @@ let stepPlayer pIdx game =
           | 0 -> 10
           | n -> n
         Array.updateAt pIdx (pos, score+pos) state, n0*n1))
-    |> Seq.fold foldIntoCountMap Map.empty
+    |> Counter.ofCountSeq
 
   let isWin = Array.item pIdx >> snd >> (<=) game.WinScore
   let wins =
@@ -111,7 +107,8 @@ let stepPlayer pIdx game =
         state
         |> Seq.removeAt pIdx
         |> Seq.map (fun (_, score) -> score, n))
-      |> Seq.fold foldIntoCountMap game.LosingScores}
+      |> Counter.ofCountSeq
+      |> Counter.merge game.LosingScores}
 
 let rec play game =
   if Map.isEmpty game.LiveStates then

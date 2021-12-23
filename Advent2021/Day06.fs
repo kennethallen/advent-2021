@@ -1,15 +1,10 @@
 ﻿module Day06
 
-let mergeCountMap (m : Map<'a, uint64>) (k, (a : uint64)) =
-  Map.change k (fun n -> Some (defaultArg n 0UL |> (+) a)) m
-let countMapOfSeq = Seq.fold mergeCountMap Map.empty
-
 let sim days (ls : string seq) =
   let init =
     (Seq.head ls).Split ","
     |> Seq.map int
-    |> Seq.map (fun n -> (n, 1UL))
-    |> countMapOfSeq
+    |> Counter.ofSeq
   let step m =
     m
     |> Map.toSeq
@@ -17,7 +12,7 @@ let sim days (ls : string seq) =
       match f with
       | 0 -> [6, n; 8, n]
       | f -> [f-1, n])
-    |> countMapOfSeq
+    |> Counter.ofCountSeq
   init
   |> Seq.unfold (step >> (fun m -> Some (m, m)))
   |> Seq.item (days-1)

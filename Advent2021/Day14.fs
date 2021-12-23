@@ -19,12 +19,6 @@ let private parse ls =
     |> Map.ofSeq
   temp, rules
 
-let private countAdd (n : uint64) k =
-  Map.change k (Option.map ((+) n) >> Option.orElse (Some n))
-
-let private mergeCountMaps m0 m1 =
-  Map.fold (fun m k v -> countAdd v k m) m0 m1
-
 let rec private countTail rules memo e0 e1 =
   function
   | 0 -> Map.ofList [e1, 1UL], memo
@@ -35,7 +29,7 @@ let rec private countTail rules memo e0 e1 =
       let en = Map.find (e0, e1) rules
       let m0, memo = countTail rules memo e0 en (steps-1)
       let m1, memo = countTail rules memo en e1 (steps-1)
-      let m = mergeCountMaps m0 m1
+      let m = Counter.merge m0 m1
       m, Map.add (e0, e1, steps) m memo
 
 let private count rules steps es =
@@ -43,14 +37,14 @@ let private count rules steps es =
   |> Seq.pairwise
   |> Seq.fold (fun (c0, memo) (e0, e1) ->
     let c1, memo = countTail rules memo e0 e1 steps
-    mergeCountMaps c0 c1, memo) (Map.empty, Map.empty)
+    Counter.merge c0 c1, memo) (Map.empty, Map.empty)
   |> fst
-  |> countAdd 1UL (Seq.head es)
+  |> Counter.add (Seq.head es)
 
 let private run n ls =
   let temp, rules = parse ls
   let counts = count rules n temp |> Map.values
-  (Seq.max counts) - (Seq.min counts)
+  Seq.max counts - Seq.min counts
 
 let part1 : string seq -> uint64 = run 10
 let part2 : string seq -> uint64 = run 40
