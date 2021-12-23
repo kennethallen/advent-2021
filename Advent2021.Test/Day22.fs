@@ -32,16 +32,21 @@ let in1 = [
   "on x=-41..9,y=-7..43,z=-33..15"
   "on x=-54112..-39298,y=-85059..-49293,z=-27449..7877"
   "on x=967..23432,y=45373..81175,z=27513..53682"]
-let in2 = File.ReadLines "Input/22.txt" |> Seq.cache
+let in2 = File.ReadLines "Input/22a.txt" |> Seq.cache
+let in3 = File.ReadLines "Input/22.txt" |> Seq.cache
 
 [<Fact>]
 let part1_in0 () = Assert.Equal(39L, part1 in0)
 [<Fact>]
 let part1_in1 () = Assert.Equal(590784L, part1 in1)
 [<Fact>]
-let part1_in2 () = Assert.Equal(797160L, part1 in2)
+let part1_in2 () = Assert.Equal(474140L, part1 in2)
+[<Fact>]
+let part1_in3 () = Assert.Equal(611176L, part1 in3)
 
-//[<Fact>]
-//let part2_in0 () = Assert.Equal(444356092776315UL, part2 in0)
-//[<Fact>]
-//let part2_in1 () = Assert.Equal(27464148626406UL, part2 in1)
+[<Fact>]
+let part2_in0 () = Assert.Equal(39L, part2 in0)
+[<Fact>]
+let part2_in2 () = Assert.Equal(2758514936282235L, part2 in2)
+[<Fact>]
+let part2_in3 () = Assert.Equal(1201259791805392L, part2 in3)

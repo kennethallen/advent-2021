@@ -1,109 +1,102 @@
 ﻿module Day22
+#nowarn "25"
 
-open System
 open System.Text.RegularExpressions
 
-type Node<'a> =
-  | State of bool
-  | Children of 'a list
-
-type Octree = {
-  X: int64
-  Y: int64
-  Z: int64
-  Dim: int64
-  Node: Node<Octree>
+type private RPrism = {
+  Los: int64 array
+  His: int64 array
 }
 
-type RPrism = {
-  X0: int64
-  X1: int64
-  Y0: int64
-  Y1: int64
-  Z0: int64
-  Z1: int64
+module private RPrism =
+  let empty p = Array.exists2 (>) p.Los p.His
+
+  let tryNonempty = Some >> Option.filter (empty >> not)
+
+  let tryClip m p =
+    tryNonempty {
+      Los = Array.map2 max p.Los m.Los
+      His = Array.map2 min p.His m.His
+    }
+
+  let card p =
+    Seq.map2 (-) p.His p.Los
+    |> Seq.map ((+) 1L)
+    |> Seq.reduce (*)
+
+  let trySlice dim lo hi p =
+    if hi < p.Los[dim] || lo > p.His[dim] then
+      None
+    else
+      Some
+        {p with
+          Los = Array.updateAt dim lo p.Los
+          His = Array.updateAt dim hi p.His}
+
+type private Zone = {
+  State: bool
+  Idx: int
+  Prism: RPrism
 }
 
-module Octree =
-  let makeChildren o =
-    match o.Node with
-    | Children cs -> cs
-    | State s ->
-      let halfDim = o.Dim >>> 1
-      [o.Z; o.Z + halfDim]
-      |> Seq.allPairs [o.Y; o.Y + halfDim]
-      |> Seq.allPairs [o.X; o.X + halfDim]
-      |> Seq.map (fun (x, (y, z)) -> {X=x; Y=y; Z=z; Dim=halfDim; Node=State s})
-      |> List.ofSeq
-
-  let withinPrism p (o: Octree) =
-    p.X0 <= o.X && o.X+o.Dim-1L <= p.X1
-    && p.Y0 <= o.Y && o.Y+o.Dim-1L <= p.Y1
-    && p.Z0 <= o.Z && o.Z+o.Dim-1L <= p.Z1
-
-  let disjointFromPrism p (o: Octree) =
-    p.X1 < o.X || o.X+o.Dim <= p.X0
-    || p.Y1 < o.Y || o.Y+o.Dim <= p.Y0
-    || p.Z1 < o.Z || o.Z+o.Dim <= p.Z0
-
-  let rec apply s p o =
-    if disjointFromPrism p o then
-      o
-    elif withinPrism p o then
-      {o with Node=State s}
+module private Zone =
+  let card z =
+    if z.State then
+      RPrism.card z.Prism
     else
-      assert (o.Dim > 1)
-      {o with Node=Children (makeChildren o |> List.map (apply s p))}
+      0
 
-  let rec clip p o =
-    if disjointFromPrism p o then
-      {o with Node=State false}
-    elif withinPrism p o then
-      o
-    else
-      {o with Node=Children (makeChildren o |> List.map (clip p))}
+  let trySlice dim lo hi z =
+    RPrism.trySlice dim lo hi z.Prism
+    |> Option.map (fun p -> {z with Prism=p})
 
-  let rec card o =
-    match o.Node with
-    | State true -> o.Dim * o.Dim * o.Dim
-    | State false -> 0L
-    | Children cs -> cs |> List.sumBy card
+  let tryClip m z =
+    RPrism.tryClip m z.Prism
+    |> Option.map (fun p -> {z with Prism=p})
 
-let regex = Regex @"^(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)$"
-let parse: string seq -> (bool * RPrism) seq =
-  Seq.map (fun l ->
+let private regex = Regex @"^(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)$"
+let private parse: string seq -> Zone list =
+  Seq.mapi (fun i l ->
     let state::coords =
       (regex.Match l).Groups
       |> Seq.tail
       |> Seq.map (fun g -> g.Value)
       |> List.ofSeq
-    let [x0; x1; y0; y1; z0; z1] = coords |> List.map int64
-    state = "on", {X0=x0; X1=x1; Y0=y0; Y1=y1; Z0=z0; Z1=z1})
-  >> Seq.cache
+    let coords = coords |> List.map int64
+    let prism = {
+      Los = [|0..2..4|] |> Array.map (fun i -> List.item i coords)
+      His = [|1..2..5|] |> Array.map (fun i -> List.item i coords)
+    }
+    {State=state = "on"; Idx=i; Prism=prism})
+  >> List.ofSeq
 
-let step octree (state, prism) = Octree.apply state prism octree
+let private sliceUp dim zs =
+  Seq.append
+    (Seq.map (fun z -> z.Prism.Los[dim]) zs)
+    (Seq.map (fun z -> z.Prism.His[dim]+1L) zs)
+  |> Seq.distinct
+  |> Seq.sort
+  |> Seq.pairwise
+  |> Seq.map (fun (lo, hi) ->
+    zs |> List.choose (Zone.trySlice dim lo (hi-1L)))
+  |> List.ofSeq
 
-let po2Ceil n =
-  let rec f p = if p >= n then p else f (p <<< 1)
-  f 1L
-  
-let part1 ls =
-  let bounds = {X0= -50L; X1=50L; Y0= -50L; Y1=50L; Z0= -50L; Z1=50L}
-  let zones = parse ls
-  let maxCoord =
-    zones
-    |> Seq.collect (fun (_, p) -> [p.X0; p.X1; p.Y0; p.Y1; p.Z0; p.X1])
-    |> Seq.map Math.Abs
-    |> Seq.max
-    |> (+) 1L
-    |> po2Ceil
-  let octree = {
-    X = -maxCoord
-    Y = -maxCoord
-    Z = -maxCoord
-    Dim = 2L*maxCoord
-    Node = State false}
-  zones
-  |> Seq.fold step octree
-  |> Octree.clip bounds
-  |> Octree.card
+let private card zs =
+  let rec f dim zs =
+    if dim = 3 then
+      assert (zs |> List.pairwise |> List.forall (fun (z0, z1) -> z0.Prism = z1.Prism))
+      match zs with
+      | [] -> 0L
+      | zs -> Zone.card (zs |> List.maxBy (fun z -> z.Idx))
+    else
+      sliceUp dim zs
+      |> List.sumBy (f (dim+1))
+  f 0 zs
+    
+let part1: string seq -> int64 =
+  let bounds = {Los=Array.replicate 3 -50; His=Array.replicate 3 50}
+  parse
+  >> List.choose (Zone.tryClip bounds)
+  >> card
+
+let part2: string seq -> int64 = parse >> card
