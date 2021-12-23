@@ -11,7 +11,7 @@ let private parse : string seq -> int array array =
 
 let private dims = Day11.dims
 
-let private heur (ax: int, ay: int) (bx, by) = Math.Abs(ax - bx) + Math.Abs(ay - by)
+let private heur (ax, ay) (bx, by) = abs (ax-bx) + abs (ay-by)
 
 let private aStar map start dest =
   let maxX, maxY = dims map

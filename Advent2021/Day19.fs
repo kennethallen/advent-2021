@@ -1,8 +1,6 @@
 ﻿module Day19
 #nowarn "25"
 
-open System
-
 let rec parse ls =
   let ls = Seq.tail ls
   let i = Seq.tryFindIndex (fun (l: string) -> l.Length = 0) ls
@@ -48,7 +46,7 @@ let facings =
     (oddRefs |> Seq.collect (fun r -> oddNegs |> Seq.map ((>>) r)))
   |> List.ofSeq
   
-let dist (x0: int, y0: int, z0: int) (x1, y1, z1) = Math.Abs(x0-x1) + Math.Abs(y0-y1) + Math.Abs(z0-z1)
+let dist (x0, y0, z0) (x1, y1, z1) = abs (x0-x1) + abs (y0-y1) + abs (z0-z1)
 let (+) (x0, y0, z0) (x1, y1, z1) = x0+x1, y0+y1, z0+z1
 let (-) (x0, y0, z0) (x1, y1, z1) = x0-x1, y0-y1, z0-z1
 

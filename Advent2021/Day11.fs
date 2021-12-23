@@ -18,8 +18,8 @@ let allCoords map =
   let x, y = dims map
   Seq.allPairs { 0 .. x-1 } { 0 .. y-1 }
 
-let adjacent (x0 : int, y0 : int) (x1, y1) =
-  Math.Abs(x0 - x1) <= 1 && Math.Abs(y0 - y1) <= 1
+let adjacent (x0, y0) (x1, y1) =
+  abs (x0-x1) <= 1 && abs (y0-y1) <= 1
 
 let resetFlares =
   Array.map (Array.map (fun n -> if n > 9 then 0 else n))
