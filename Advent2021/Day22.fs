@@ -82,16 +82,17 @@ let private sliceUp dim zs =
   |> List.ofSeq
 
 let private card zs =
-  let rec f dim zs =
-    if dim = 3 then
+  let rec f dims zs =
+    match dims with
+    | [] ->
       assert (zs |> List.pairwise |> List.forall (fun (z0, z1) -> z0.Prism = z1.Prism))
       match zs with
       | [] -> 0L
       | zs -> Zone.card (zs |> List.maxBy (fun z -> z.Idx))
-    else
+    | dim::dims ->
       sliceUp dim zs
-      |> List.sumBy (f (dim+1))
-  f 0 zs
+      |> List.sumBy (f dims)
+  f [0..2] zs
     
 let part1: string seq -> int64 =
   let bounds = {Los=Array.replicate 3 -50; His=Array.replicate 3 50}
