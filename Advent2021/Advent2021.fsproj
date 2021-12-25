@@ -10,10 +10,9 @@
     <Compile Include="*.fs" />
   </ItemGroup>
 
-  <ItemGroup />
-
   <ItemGroup>
     <PackageReference Include="FSharpx.Collections" Version="3.0.1" />
+    <PackageReference Include="MathNet.Numerics.FSharp" Version="4.15.0" />
   </ItemGroup>
 
 </Project>
