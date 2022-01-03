@@ -9,11 +9,11 @@ type private RPrism = {
 }
 
 module private RPrism =
-  let empty p = Array.exists2 (>) p.Los p.His
+  let empty p = Array.exists2 (>=) p.Los p.His
 
   let tryNonempty = Some >> Option.filter (empty >> not)
 
-  let tryClip m p =
+  let tryIntersect m p =
     tryNonempty {
       Los = Array.map2 max p.Los m.Los
       His = Array.map2 min p.His m.His
@@ -21,11 +21,10 @@ module private RPrism =
 
   let card p =
     Seq.map2 (-) p.His p.Los
-    |> Seq.map ((+) 1L)
     |> Seq.reduce (*)
 
   let trySlice dim lo hi p =
-    if hi < p.Los[dim] || lo > p.His[dim] then
+    if hi <= p.Los[dim] || lo >= p.His[dim] then
       None
     else
       Some
@@ -51,7 +50,7 @@ module private Zone =
     |> Option.map (fun p -> {z with Prism=p})
 
   let tryClip m z =
-    RPrism.tryClip m z.Prism
+    RPrism.tryIntersect m z.Prism
     |> Option.map (fun p -> {z with Prism=p})
 
 let private regex = Regex @"^(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)$"
@@ -65,27 +64,26 @@ let private parse: string seq -> Zone list =
     let coords = coords |> List.map int64
     let prism = {
       Los = [|0..2..4|] |> Array.map (fun i -> List.item i coords)
-      His = [|1..2..5|] |> Array.map (fun i -> List.item i coords)
+      His = [|1..2..5|] |> Array.map (fun i -> 1L + List.item i coords)
     }
     {State=state = "on"; Idx=i; Prism=prism})
   >> List.ofSeq
 
 let private sliceUp dim zs =
-  Seq.append
-    (Seq.map (fun z -> z.Prism.Los[dim]) zs)
-    (Seq.map (fun z -> z.Prism.His[dim]+1L) zs)
+  zs
+  |> Seq.collect (fun z -> [z.Prism.Los[dim]; z.Prism.His[dim]])
   |> Seq.distinct
   |> Seq.sort
   |> Seq.pairwise
   |> Seq.map (fun (lo, hi) ->
-    zs |> List.choose (Zone.trySlice dim lo (hi-1L)))
+    zs |> List.choose (Zone.trySlice dim lo hi))
   |> List.ofSeq
 
 let private card zs =
   let rec f dims zs =
     match dims with
     | [] ->
-      assert (zs |> List.pairwise |> List.forall (fun (z0, z1) -> z0.Prism = z1.Prism))
+      assert (zs |> Seq.pairwise |> Seq.forall (fun (z0, z1) -> z0.Prism = z1.Prism))
       match zs with
       | [] -> 0L
       | zs -> Zone.card (zs |> List.maxBy (fun z -> z.Idx))
@@ -95,7 +93,7 @@ let private card zs =
   f [0..2] zs
     
 let part1: string seq -> int64 =
-  let bounds = {Los=Array.replicate 3 -50; His=Array.replicate 3 50}
+  let bounds = {Los=Array.replicate 3 -50; His=Array.replicate 3 51}
   parse
   >> List.choose (Zone.tryClip bounds)
   >> card
