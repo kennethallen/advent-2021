@@ -3,13 +3,13 @@
 
 let rec parse ls =
   let ls = Seq.tail ls
-  let i = Seq.tryFindIndex (fun (l: string) -> l.Length = 0) ls
+  let i = Seq.tryFindIndex (fun (l : string) -> l.Length = 0) ls
   let s =
     match i with
     | Some i -> Seq.take i ls
     | None -> ls
     |> Seq.map (fun s ->
-      let [|x; y; z|]: int array = s.Split(",") |> Array.map int
+      let [|x; y; z|] : int array = s.Split(",") |> Array.map int
       x, y, z)
     |> List.ofSeq
   let rest =
@@ -81,7 +81,7 @@ let overlapAll (s::ss) =
 
   inner (Map.ofList [s, id]) [s] ss
 
-let part1: string seq -> int =
+let part1 : string seq -> int =
   parse
   >> overlapAll
   >> Map.toSeq
@@ -89,7 +89,7 @@ let part1: string seq -> int =
   >> Seq.distinct
   >> Seq.length
 
-let part2: string seq -> int =
+let part2 : string seq -> int =
   let rec pairs =
     function
     | [] -> Seq.empty

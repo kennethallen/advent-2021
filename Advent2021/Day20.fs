@@ -41,5 +41,5 @@ let run n ls =
   |> Seq.filter id
   |> Seq.length
 
-let part1: string seq -> int = run 2
-let part2: string seq -> int = run 50
+let part1 : string seq -> int = run 2
+let part2 : string seq -> int = run 50

@@ -4,8 +4,8 @@ type SFNum =
   | Pair of SFNum * SFNum
   | Num of int
 
-let rec parse (s: string) =
-  let rec findComma (s: string) i d =
+let rec parse (s : string) =
+  let rec findComma (s : string) i d =
     match s[i], d with
     | '[', d -> findComma s (i + 1) (d + 1)
     | ']', d -> findComma s (i + 1) (d - 1)
@@ -69,7 +69,7 @@ let rec magnitude =
 
 let (+) a b = reduce (Pair(a, b))
 
-let part1: string seq -> int = Seq.map parse >> Seq.reduce (+) >> magnitude
+let part1 : string seq -> int = Seq.map parse >> Seq.reduce (+) >> magnitude
 
 let part2 ls =
   let ns = Seq.map parse ls |> Seq.cache

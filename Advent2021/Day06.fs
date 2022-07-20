@@ -5,14 +5,13 @@ let sim days (ls : string seq) =
     (Seq.head ls).Split ","
     |> Seq.map int
     |> Counter.ofSeq
-  let step m =
-    m
-    |> Map.toSeq
-    |> Seq.collect (fun (f, n) ->
+  let step =
+    Map.toSeq
+    >> Seq.collect (fun (f, n) ->
       match f with
       | 0 -> [6, n; 8, n]
       | f -> [f-1, n])
-    |> Counter.ofCountSeq
+    >> Counter.ofCountSeq
   init
   |> Seq.unfold (step >> (fun m -> Some (m, m)))
   |> Seq.item (days-1)

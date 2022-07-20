@@ -4,9 +4,9 @@
 open System.Text.RegularExpressions
 
 type Die<'a> = {
-  ThriceFn: 'a -> (int * uint64) list * 'a
-  State: 'a
-  RollCount: int
+  ThriceFn : 'a -> (int * uint64) list * 'a
+  State : 'a
+  RollCount : int
 }
 
 module Die =
@@ -42,12 +42,12 @@ module Die =
   }
 
 type Game<'a> = {
-  WinScore: int
-  Wins: uint64 array
-  LosingScores: Map<int, uint64>
-  Die: Die<'a>
-  LiveStates: Map<(int * int) array, uint64>
-  NextPlayer: int
+  WinScore : int
+  Wins : uint64 array
+  LosingScores : Map<int, uint64>
+  Die : Die<'a>
+  LiveStates : Map<(int * int) array, uint64>
+  NextPlayer : int
 }
 
 module Game =
@@ -61,7 +61,7 @@ module Game =
   }
 
 let regex = Regex "^Player (\d+) starting position: (\d+)$"
-let parse: string seq -> int array =
+let parse : string seq -> int array =
   Seq.map (fun l ->
     let [id; pos] =
       (regex.Match l).Groups
@@ -78,9 +78,9 @@ let stepPlayer pIdx game =
   let states =
     game.LiveStates
     |> Map.toSeq
-    |> Seq.collect (fun (state, n0: uint64) ->
+    |> Seq.collect (fun (state, n0 : uint64) ->
       rolls
-      |> Seq.map (fun (roll, n1: uint64) -> 
+      |> Seq.map (fun (roll, n1 : uint64) -> 
         let pos, score = Array.item pIdx state
         let pos =
           match (pos + roll) % 10 with

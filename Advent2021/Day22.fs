@@ -4,8 +4,8 @@
 open System.Text.RegularExpressions
 
 type private RPrism = {
-  Los: int64 array
-  His: int64 array
+  Los : int64 array
+  His : int64 array
 }
 
 module private RPrism =
@@ -33,9 +33,9 @@ module private RPrism =
           His = Array.updateAt dim hi p.His}
 
 type private Zone = {
-  State: bool
-  Idx: int
-  Prism: RPrism
+  State : bool
+  Idx : int
+  Prism : RPrism
 }
 
 module private Zone =
@@ -54,7 +54,7 @@ module private Zone =
     |> Option.map (fun p -> {z with Prism=p})
 
 let private regex = Regex @"^(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)$"
-let private parse: string seq -> Zone list =
+let private parse : string seq -> Zone list =
   Seq.mapi (fun i l ->
     let state::coords =
       (regex.Match l).Groups
@@ -92,10 +92,10 @@ let private card zs =
       |> List.sumBy (f dims)
   f [0..2] zs
     
-let part1: string seq -> int64 =
+let part1 : string seq -> int64 =
   let bounds = {Los=Array.replicate 3 -50; His=Array.replicate 3 51}
   parse
   >> List.choose (Zone.tryClip bounds)
   >> card
 
-let part2: string seq -> int64 = parse >> card
+let part2 : string seq -> int64 = parse >> card
